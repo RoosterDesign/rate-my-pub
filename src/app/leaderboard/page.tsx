@@ -30,11 +30,11 @@ export default async function LeaderboardPage() {
       LEFT JOIN scores s ON s.pub_id = p.id
       GROUP BY p.id, p.name, p.completed
       ORDER BY total_score DESC, p.name ASC
-    ` as Promise<LeaderboardEntry[]>,
-    sql`SELECT COUNT(*) AS count FROM criteria`,
+    ` as unknown as LeaderboardEntry[],
+    sql`SELECT COUNT(*) AS count FROM criteria` as unknown as { count: number }[],
   ])
 
-  const maxScore = Number((criteriaCount as any[])[0].count) * 10
+  const maxScore = Number(criteriaCount[0].count) * 10
 
   const uniqueScores = [...new Set(entries.map((e) => e.total_score))].sort((a, b) => b - a)
   const scoreRank = new Map(uniqueScores.map((score, i) => [score, i + 1]))
