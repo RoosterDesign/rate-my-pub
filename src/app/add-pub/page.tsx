@@ -25,6 +25,15 @@ export default function AddPubPage() {
                 autoFocus
               />
             </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="maps_url">Google Maps Link <span className="text-muted-foreground">(optional)</span></Label>
+              <Input
+                id="maps_url"
+                name="maps_url"
+                type="url"
+                placeholder="https://maps.google.com/..."
+              />
+            </div>
             <Button type="submit" size="lg">Add Pub</Button>
           </form>
         </CardContent>

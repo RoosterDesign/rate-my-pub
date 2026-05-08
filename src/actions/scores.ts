@@ -29,5 +29,5 @@ export async function saveScores(pubId: number, formData: FormData) {
 
   revalidatePath(`/pubs/${pubId}`)
   revalidatePath('/leaderboard')
-  redirect(`/pubs/${pubId}`)
+  redirect(`/pubs/${pubId}?saved=true`)
 }

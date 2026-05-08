@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
+import { Toaster } from '@/components/ui/sonner'
+import { BottomNav } from '@/components/BottomNav'
 
-const geist = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-sans',
   subsets: ['latin'],
 })
 
@@ -23,9 +25,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${geist.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} dark h-full antialiased`}>
       <body className="min-h-full bg-background text-foreground">
-        <main className="mx-auto max-w-lg px-4 py-8">{children}</main>
+        <main className="mx-auto max-w-lg px-4 py-8 pb-24">{children}</main>
+        <BottomNav />
+        <Toaster position="top-center" />
       </body>
     </html>
   )

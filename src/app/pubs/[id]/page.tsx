@@ -13,7 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { MapPin, Pencil } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { SavedToast } from '@/components/SavedToast'
+import { DeletePubButton } from '@/components/DeletePubButton'
 
 interface Criterion {
   id: number
@@ -30,20 +35,24 @@ interface Score {
 interface Pub {
   id: number
   name: string
+  maps_url: string | null
 }
 
 export default async function PubRatingPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ saved?: string }>
 }) {
   const { id } = await params
+  const { saved } = await searchParams
   const pubId = parseInt(id, 10)
 
   if (isNaN(pubId)) notFound()
 
   const [pubResult, criteriaResult, scoresResult] = await Promise.all([
-    sql`SELECT id, name FROM pubs WHERE id = ${pubId}`,
+    sql`SELECT id, name, maps_url FROM pubs WHERE id = ${pubId}`,
     sql`SELECT id, name, subtitle, display_order FROM criteria ORDER BY display_order ASC`,
     sql`SELECT criterion_id, score FROM scores WHERE pub_id = ${pubId}`,
   ])
@@ -63,11 +72,25 @@ export default async function PubRatingPage({
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/pubs" className="text-sm text-muted-foreground">&larr; Back to Pubs</Link>
-      <div className="flex items-baseline justify-between">
-        <h1 className="text-2xl font-bold">{pub.name}</h1>
+      <SavedToast show={saved === 'true'} />
+
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <h1 className="text-2xl font-bold truncate">{pub.name}</h1>
+          {pub.maps_url && (
+            <a
+              href={pub.maps_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Open in Google Maps"
+            >
+              <MapPin className="size-5" />
+            </a>
+          )}
+        </div>
         {hasScores && (
-          <span className="text-muted-foreground text-sm">
+          <span className="shrink-0 text-muted-foreground text-sm">
             <span className="text-xl font-bold text-foreground">{totalScore}</span>/50
           </span>
         )}
@@ -118,6 +141,17 @@ export default async function PubRatingPage({
           Save Scores
         </Button>
       </form>
+
+      <div className="mt-4 border-t border-border pt-4 flex gap-2">
+        <Link
+          href={`/pubs/${pub.id}/edit`}
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-2')}
+        >
+          <Pencil className="size-4" />
+          Edit Pub
+        </Link>
+        <DeletePubButton pubId={pub.id} pubName={pub.name} />
+      </div>
     </div>
   )
 }
