@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { sql } from '@/lib/db'
 import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
+import { PubList } from '@/components/PubList'
 
 interface Pub {
   id: number
@@ -26,17 +26,7 @@ export default async function PubsPage() {
           <Link href="/add-pub" className="underline">Add one!</Link>
         </p>
       ) : (
-        <div className="flex flex-col gap-2">
-          {pubs.map((pub) => (
-            <Link key={pub.id} href={`/pubs/${pub.id}`}>
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                <CardContent className="py-4">
-                  <span className="text-lg font-medium">{pub.name}</span>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+        <PubList pubs={pubs} />
       )}
     </div>
   )
