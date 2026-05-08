@@ -71,6 +71,7 @@ export default async function PubRatingPage({
   const saveScoresForPub = saveScores.bind(null, pubId)
 
   const totalScore = existingScores.reduce((sum, s) => sum + s.score, 0)
+  const maxScore = criteria.length * 10
   const hasScores = existingScores.length > 0
 
   return (
@@ -99,7 +100,7 @@ export default async function PubRatingPage({
         </div>
         {hasScores && (
           <span className="shrink-0 text-muted-foreground text-sm">
-            <span className="text-xl font-bold text-foreground">{totalScore}</span>/50
+            <span className="text-xl font-bold text-foreground">{totalScore}</span>/{maxScore}
           </span>
         )}
       </div>
