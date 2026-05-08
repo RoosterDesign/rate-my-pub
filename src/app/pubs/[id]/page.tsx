@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { sql } from '@/lib/db'
 import { saveScores } from '@/actions/scores'
 import { notFound } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import {
@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { MapPin, Pencil } from 'lucide-react'
-import { buttonVariants } from '@/components/ui/button'
+import { CheckCircle, MapPin, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { SavedToast } from '@/components/SavedToast'
 import { DeletePubButton } from '@/components/DeletePubButton'
+import { ResetPubButton } from '@/components/ResetPubButton'
+import { SaveScoresSubmit } from '@/components/SaveScoresSubmit'
 
 interface Criterion {
   id: number
@@ -37,6 +38,7 @@ interface Pub {
   name: string
   maps_url: string | null
   notes: string | null
+  completed: boolean
 }
 
 export default async function PubRatingPage({
@@ -53,7 +55,7 @@ export default async function PubRatingPage({
   if (isNaN(pubId)) notFound()
 
   const [pubResult, criteriaResult, scoresResult] = await Promise.all([
-    sql`SELECT id, name, maps_url, notes FROM pubs WHERE id = ${pubId}`,
+    sql`SELECT id, name, maps_url, notes, completed FROM pubs WHERE id = ${pubId}`,
     sql`SELECT id, name, subtitle, display_order FROM criteria ORDER BY display_order ASC`,
     sql`SELECT criterion_id, score FROM scores WHERE pub_id = ${pubId}`,
   ])
@@ -75,9 +77,14 @@ export default async function PubRatingPage({
     <div className="flex flex-col gap-4">
       <SavedToast show={saved === 'true'} />
 
+      <Link href="/pubs" className="text-sm text-muted-foreground">&larr; Back to Pubs</Link>
+
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <h1 className="text-2xl font-bold truncate">{pub.name}</h1>
+          {pub.completed && (
+            <CheckCircle className="shrink-0 size-6 text-green-400" />
+          )}
           {pub.maps_url && (
             <a
               href={pub.maps_url}
@@ -150,9 +157,7 @@ export default async function PubRatingPage({
           />
         </div>
 
-        <Button type="submit" size="lg" className="mt-2 h-14 text-lg">
-          Save Scores
-        </Button>
+        <SaveScoresSubmit />
       </form>
 
       <div className="mt-4 border-t border-border pt-4 flex gap-2">
@@ -163,6 +168,7 @@ export default async function PubRatingPage({
           <Pencil className="size-4" />
           Edit Pub
         </Link>
+        <ResetPubButton pubId={pub.id} />
         <DeletePubButton pubId={pub.id} pubName={pub.name} />
       </div>
     </div>

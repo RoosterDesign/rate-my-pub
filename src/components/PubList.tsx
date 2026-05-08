@@ -4,10 +4,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 interface Pub {
   id: number
   name: string
+  completed: boolean
 }
 
 export function PubList({ pubs }: { pubs: Pub[] }) {
@@ -31,7 +33,14 @@ export function PubList({ pubs }: { pubs: Pub[] }) {
         <div className="flex flex-col gap-2">
           {filtered.map((pub) => (
             <Link key={pub.id} href={`/pubs/${pub.id}`}>
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+              <Card
+                className={cn(
+                  'transition-colors cursor-pointer',
+                  pub.completed
+                    ? 'border-green-400 bg-green-900/50 hover:bg-green-900/70'
+                    : 'hover:bg-muted/50'
+                )}
+              >
                 <CardContent className="py-4">
                   <span className="text-lg font-medium">{pub.name}</span>
                 </CardContent>

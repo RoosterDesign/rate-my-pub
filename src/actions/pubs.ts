@@ -45,3 +45,12 @@ export async function deletePub(pubId: number) {
   revalidatePath('/leaderboard')
   redirect('/pubs')
 }
+
+export async function resetPub(pubId: number) {
+  await sql`DELETE FROM scores WHERE pub_id = ${pubId}`
+  await sql`UPDATE pubs SET completed = false WHERE id = ${pubId}`
+  revalidatePath(`/pubs/${pubId}`)
+  revalidatePath('/pubs')
+  revalidatePath('/leaderboard')
+  redirect(`/pubs/${pubId}`)
+}

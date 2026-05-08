@@ -7,10 +7,11 @@ import { PubList } from '@/components/PubList'
 interface Pub {
   id: number
   name: string
+  completed: boolean
 }
 
 export default async function PubsPage() {
-  const pubs = await sql`SELECT id, name FROM pubs ORDER BY name ASC` as Pub[]
+  const pubs = await sql`SELECT id, name, completed FROM pubs ORDER BY name ASC` as Pub[]
 
   return (
     <div className="flex flex-col gap-4">

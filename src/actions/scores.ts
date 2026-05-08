@@ -20,7 +20,7 @@ export async function saveScores(pubId: number, formData: FormData) {
     }
   }
 
-  await sql`UPDATE pubs SET notes = ${notes || null} WHERE id = ${pubId}`
+  await sql`UPDATE pubs SET notes = ${notes || null}, completed = true WHERE id = ${pubId}`
 
   for (const entry of entries) {
     await sql`
@@ -32,6 +32,7 @@ export async function saveScores(pubId: number, formData: FormData) {
   }
 
   revalidatePath(`/pubs/${pubId}`)
+  revalidatePath('/pubs')
   revalidatePath('/leaderboard')
   redirect(`/pubs/${pubId}?saved=true`)
 }
