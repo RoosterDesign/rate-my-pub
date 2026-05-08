@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS pubs (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS criteria (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  subtitle TEXT,
+  display_order INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS scores (
+  pub_id INTEGER REFERENCES pubs(id) ON DELETE CASCADE,
+  criterion_id INTEGER REFERENCES criteria(id) ON DELETE CASCADE,
+  score INTEGER CHECK (score >= 0 AND score <= 10) DEFAULT 0,
+  updated_at TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (pub_id, criterion_id)
+);
