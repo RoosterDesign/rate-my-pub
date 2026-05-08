@@ -36,6 +36,7 @@ interface Pub {
   id: number
   name: string
   maps_url: string | null
+  notes: string | null
 }
 
 export default async function PubRatingPage({
@@ -52,7 +53,7 @@ export default async function PubRatingPage({
   if (isNaN(pubId)) notFound()
 
   const [pubResult, criteriaResult, scoresResult] = await Promise.all([
-    sql`SELECT id, name, maps_url FROM pubs WHERE id = ${pubId}`,
+    sql`SELECT id, name, maps_url, notes FROM pubs WHERE id = ${pubId}`,
     sql`SELECT id, name, subtitle, display_order FROM criteria ORDER BY display_order ASC`,
     sql`SELECT criterion_id, score FROM scores WHERE pub_id = ${pubId}`,
   ])
@@ -136,6 +137,18 @@ export default async function PubRatingPage({
             </Card>
           )
         })}
+
+        <div className="flex flex-col gap-2 mt-4">
+          <Label htmlFor="notes">Notes</Label>
+          <textarea
+            id="notes"
+            name="notes"
+            defaultValue={pub.notes ?? ''}
+            placeholder="Add your notes about this pub..."
+            rows={4}
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+          />
+        </div>
 
         <Button type="submit" size="lg" className="mt-2 h-14 text-lg">
           Save Scores

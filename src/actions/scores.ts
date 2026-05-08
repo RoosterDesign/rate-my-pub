@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
 export async function saveScores(pubId: number, formData: FormData) {
+  const notes = (formData.get('notes') as string | null) ?? ''
+
   const entries: Array<{ criterionId: number; score: number }> = []
 
   for (const [key, value] of formData.entries()) {
@@ -17,6 +19,8 @@ export async function saveScores(pubId: number, formData: FormData) {
       }
     }
   }
+
+  await sql`UPDATE pubs SET notes = ${notes || null} WHERE id = ${pubId}`
 
   for (const entry of entries) {
     await sql`
